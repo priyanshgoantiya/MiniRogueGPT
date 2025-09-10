@@ -99,11 +99,17 @@ The training script will:
 
 ### Training Output
 ```
-step 0: train loss 4.1234, test loss 4.1567
-step 500: train loss 2.3456, test loss 2.4123
-step 1000: train loss 1.8901, test loss 1.9567
-step 1500: train loss 1.5432, test loss 1.6789
-step 1999: train loss 1.2345, test loss 1.3456
+step 0: train loss 4.2817, test loss 4.2796
+step 500: train loss 1.9665, test loss 2.0664
+step 1000: train loss 1.5992, test loss 1.7774
+step 1500: train loss 1.4365, test loss 1.6367
+step 2000: train loss 1.3425, test loss 1.5668
+step 2500: train loss 1.2754, test loss 1.5156
+step 3000: train loss 1.2227, test loss 1.4931
+step 3500: train loss 1.1815, test loss 1.4806
+step 4000: train loss 1.1432, test loss 1.4715
+step 4500: train loss 1.1079, test loss 1.4686
+step 4999: train loss 1.0728, test loss 1.4791
 ```
 
 ## 💻 Usage
