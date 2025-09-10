@@ -94,7 +94,7 @@ The training script will:
 1. **Load and preprocess** your text data
 2. **Create character-level vocabulary** mapping
 3. **Split data** into training (90%) and validation (10%) sets
-4. **Train the model** for 2000 iterations with periodic evaluation
+4. **Train the model** for 5000 iterations with periodic evaluation
 5. **Save model checkpoints** every 500 iterations
 6. **Generate sample text** upon completion
 
