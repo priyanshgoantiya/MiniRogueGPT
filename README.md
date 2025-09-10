@@ -2,6 +2,7 @@ BabyGPT
 
 # MiniRogueGPT 🤖
 [Deploy Link](https://miniroguegpt.streamlit.app/)
+
 A lightweight, from-scratch implementation of a Transformer-based language model built with PyTorch, featuring a user-friendly Streamlit web interface for text generation.
 
 ## 🌟 Features
