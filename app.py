@@ -79,7 +79,7 @@ class BigramLanguageModel(nn.Module):
 # Load trained weights
 # -----------------------
 model = BigramLanguageModel().to(device)
-model.load_state_dict(torch.load("language_model.pth", map_location=device))
+model.load_state_dict(torch.load("language_model_step4999.pth", map_location=device))
 model.eval()
 
 # -----------------------
