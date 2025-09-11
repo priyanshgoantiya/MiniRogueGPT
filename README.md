@@ -94,7 +94,7 @@ The training script will:
 1. **Load and preprocess** your text data
 2. **Create character-level vocabulary** mapping
 3. **Split data** into training (90%) and validation (10%) sets
-4. **Train the model** for 5000 iterations with periodic evaluation
+4. **Train the model** for 2000 iterations with evaluation every 500 steps
 5. **Save model checkpoints** every 500 iterations
 6. **Generate sample text** upon completion
 
@@ -104,13 +104,7 @@ step 0: train loss 4.2817, test loss 4.2796
 step 500: train loss 1.9665, test loss 2.0664
 step 1000: train loss 1.5992, test loss 1.7774
 step 1500: train loss 1.4365, test loss 1.6367
-step 2000: train loss 1.3425, test loss 1.5668
-step 2500: train loss 1.2754, test loss 1.5156
-step 3000: train loss 1.2227, test loss 1.4931
-step 3500: train loss 1.1815, test loss 1.4806
-step 4000: train loss 1.1432, test loss 1.4715
-step 4500: train loss 1.1079, test loss 1.4686
-step 4999: train loss 1.0728, test loss 1.4791
+step 1999: train loss 1.3425, test loss 1.5668
 ```
 
 ## 💻 Usage
@@ -151,14 +145,16 @@ print(output)
 ### Hyperparameters
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| `batch_size` | 32 | Training batch size |
-| `block_size` | 128 | Context window length |
-| `max_iters` | 2000 | Total training iterations |
-| `learning_rate` | 3e-4 | AdamW optimizer learning rate |
+| `batch_size` | 32 | Number of samples per training batch |
+| `block_size` | 128 | Context window size |
+| `max_iters` | 2000 | Total number of training iterations |
+| `eval_interval` | 500 | Interval for evaluating loss |
+| `eval_iter` | 100 | Number of iterations to compute average loss |
+| `lr` | 3e-4 | Learning rate for AdamW optimizer |
 | `num_embd` | 256 | Embedding dimension |
+| `dropout` | 0.2 | Dropout rate to prevent overfitting |
 | `n_head` | 4 | Number of attention heads |
-| `n_layer` | 4 | Number of transformer blocks |
-| `dropout` | 0.2 | Dropout probability |
+| `n_layer` | 4 | Number of transformer layers |
 
 ### Customization
 Modify hyperparameters in `main.py` to experiment with different configurations:
@@ -192,7 +188,8 @@ MiniRogueGPT/
 ## 📊 Performance
 
 ### Training Metrics
-- **Training Time**: ~10-30 minutes (depending on GPU and dataset size)
+- **Training Time**: ~10-20 minutes (depending on GPU and dataset size)
+- **Total Iterations**: 2000 (with evaluation every 500 steps)
 - **Memory Usage**: ~2-4GB GPU memory
 - **Loss Convergence**: Typically achieves <1.5 validation loss
 - **Generation Speed**: ~100-500 tokens/second
@@ -253,7 +250,7 @@ num_embd = 128
 ```
 
 **Poor Generation Quality**
-- Increase training iterations (`max_iters = 10000`)
+- Increase training iterations (`max_iters = 5000`)
 - Use larger/better training data
 - Reduce dropout during inference
 - Try different learning rates
