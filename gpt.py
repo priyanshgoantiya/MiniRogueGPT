@@ -6,19 +6,19 @@ torch.manual_seed(1337)  # Set seed for reproducibility
 device = 'cuda' if torch.cuda.is_available() else 'cpu'  # Use GPU if available, otherwise CPu
 
 # Optimized Hyperparameters
-batch_size = 32  # Number of samples per training batch
-block_size = 128  # Context window size
-max_iters = 2000  # Total number of training iterations
+batch_size = 64 # Number of samples per training batch
+block_size = 256  # Context window size
+max_iters = 5000  # Total number of training iterations
 eval_interval = 500  # Interval for evaluating loss
-eval_iter = 100  # Number of iterations to compute average loss
+eval_iter = 200  # Number of iterations to compute average loss
 lr = 3e-4  # Learning rate for optimizer
-num_embd = 256  # Embedding size
+num_embd = 384 # Embedding size
 dropout = 0.2  # Dropout rate to prevent overfitting
-n_head = 4  # Number of attention heads
-n_layer = 4  # Number of transformer layers
+n_head = 6  # Number of attention heads
+n_layer = 6  # Number of transformer layers
 
 # Load dataset
-with open('input.txt', 'r', encoding='utf-8') as file:
+with open('/kaggle/input/shakespeare-work-file/input.txt', 'r', encoding='utf-8') as file:
     text = file.read()  # Read entire text file
 
 # Create vocabulary
