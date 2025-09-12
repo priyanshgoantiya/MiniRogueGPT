@@ -14,7 +14,6 @@ with open("input.txt", "r", encoding="utf-8") as f:
 
 chars = sorted(set(text))
 vocab_size = len(chars)
-
 stoi = {ch: i for i, ch in enumerate(chars)}
 itos = {i: ch for i, ch in enumerate(chars)}
 encode = lambda s: [stoi[c] for c in s]
@@ -42,7 +41,7 @@ class TransformerBlock(nn.Module):
         self.norm1 = nn.LayerNorm(num_embd)
         self.norm2 = nn.LayerNorm(num_embd)
         self.dropout = nn.Dropout(dropout)
-
+    
     def forward(self, X):
         T = X.size(1)
         mask = torch.triu(torch.ones(T, T, device=X.device), diagonal=1).bool()
@@ -60,7 +59,7 @@ class BigramLanguageModel(nn.Module):
         self.blocks = nn.Sequential(*[TransformerBlock(num_embd, n_head) for _ in range(n_layer)])
         self.norm = nn.LayerNorm(num_embd)
         self.head = nn.Linear(num_embd, vocab_size)
-
+    
     def forward(self, idx, targets=None):
         B, T = idx.shape
         tok_embd = self.token_embedding(idx)
@@ -68,11 +67,13 @@ class BigramLanguageModel(nn.Module):
         X = self.dropout(tok_embd + pos_embd)
         X = self.blocks(X)
         logits = self.head(self.norm(X))
+        
         loss = None
         if targets is not None:
             loss = F.cross_entropy(logits.view(-1, vocab_size), targets.view(-1))
+        
         return logits, loss
-
+    
     def generate(self, idx, max_new_tokens):
         for _ in range(max_new_tokens):
             idx_cond = idx[:, -block_size:]
@@ -86,9 +87,14 @@ class BigramLanguageModel(nn.Module):
 # -----------------------
 # Load trained weights
 # -----------------------
-model = BigramLanguageModel().to(device)
-model.load_state_dict(torch.load("language_model_step4999.pth", map_location=device))
-model.eval()
+@st.cache_resource
+def load_model():
+    model = BigramLanguageModel().to(device)
+    model.load_state_dict(torch.load("language_model_step4999.pth", map_location=device))
+    model.eval()
+    return model
+
+model = load_model()
 
 # -----------------------
 # Streamlit UI
@@ -100,8 +106,21 @@ prompt = st.text_input("Enter a prompt:", "Once upon a time")
 max_tokens = st.slider("Number of tokens to generate:", 50, 1000, 200)
 
 if st.button("Generate"):
-    context = torch.tensor([encode(prompt)], dtype=torch.long, device=device)
-    generated = model.generate(context, max_new_tokens=max_tokens)
-    output_text = decode(generated[0].tolist())
-    st.text_area("Generated Text:", output_text, height=300)
+    with st.spinner("Generating text..."):
+        try:
+            context = torch.tensor([encode(prompt)], dtype=torch.long, device=device)
+            generated = model.generate(context, max_new_tokens=max_tokens)
+            output_text = decode(generated[0].tolist())
+            st.text_area("Generated Text:", output_text, height=300)
+        except Exception as e:
+            st.error(f"Error generating text: {str(e)}")
+
+# Display model info
+st.sidebar.header("Model Information")
+st.sidebar.write(f"**Vocabulary Size:** {vocab_size}")
+st.sidebar.write(f"**Block Size:** {block_size}")
+st.sidebar.write(f"**Embedding Dimension:** {num_embd}")
+st.sidebar.write(f"**Attention Heads:** {n_head}")
+st.sidebar.write(f"**Layers:** {n_layer}")
+st.sidebar.write(f"**Device:** {device}")
 
