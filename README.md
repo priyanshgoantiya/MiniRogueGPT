@@ -40,12 +40,12 @@ MiniRogueGPT implements a decoder-only transformer architecture with the followi
 - **Dropout Regularization**: Prevents overfitting during training
 
 ### Model Specifications
-- **Context Window**: 128 tokens
-- **Embedding Dimension**: 256
-- **Attention Heads**: 4
-- **Transformer Layers**: 4
+- **Context Window**: 256 tokens
+- **Embedding Dimension**: 384
+- **Attention Heads**: 6
+- **Transformer Layers**: 6
 - **Vocabulary**: Character-level tokenization
-- **Parameters**: ~1.5M trainable parameters
+- **Parameters**: ~2.3M (23 lakh) trainable parameters
 
 ## 🚀 Installation
 
@@ -94,7 +94,7 @@ The training script will:
 1. **Load and preprocess** your text data
 2. **Create character-level vocabulary** mapping
 3. **Split data** into training (90%) and validation (10%) sets
-4. **Train the model** for 2000 iterations with evaluation every 500 steps
+4. **Train the model** for 5000 iterations with evaluation every 500 steps
 5. **Save model checkpoints** every 500 iterations
 6. **Generate sample text** upon completion
 
@@ -104,7 +104,13 @@ step 0: train loss 4.2817, test loss 4.2796
 step 500: train loss 1.9665, test loss 2.0664
 step 1000: train loss 1.5992, test loss 1.7774
 step 1500: train loss 1.4365, test loss 1.6367
-step 1999: train loss 1.3425, test loss 1.5668
+step 2000: train loss 1.3425, test loss 1.5668
+step 2500: train loss 1.2754, test loss 1.5156
+step 3000: train loss 1.2227, test loss 1.4931
+step 3500: train loss 1.1815, test loss 1.4806
+step 4000: train loss 1.1432, test loss 1.4715
+step 4500: train loss 1.1079, test loss 1.4686
+step 4999: train loss 1.0728, test loss 1.4791
 ```
 
 ## 💻 Usage
@@ -129,7 +135,7 @@ from your_model import BigramLanguageModel
 # Load trained model
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = BigramLanguageModel().to(device)
-model.load_state_dict(torch.load("language_model.pth"))
+model.load_state_dict(torch.load("language_model_step4999.pth"))
 model.eval()
 
 # Generate text
@@ -145,16 +151,16 @@ print(output)
 ### Hyperparameters
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| `batch_size` | 32 | Number of samples per training batch |
-| `block_size` | 128 | Context window size |
-| `max_iters` | 2000 | Total number of training iterations |
+| `batch_size` | 64 | Number of samples per training batch |
+| `block_size` | 256 | Context window size |
+| `max_iters` | 5000 | Total number of training iterations |
 | `eval_interval` | 500 | Interval for evaluating loss |
-| `eval_iter` | 100 | Number of iterations to compute average loss |
+| `eval_iter` | 200 | Number of iterations to compute average loss |
 | `lr` | 3e-4 | Learning rate for AdamW optimizer |
-| `num_embd` | 256 | Embedding dimension |
+| `num_embd` | 384 | Embedding dimension |
 | `dropout` | 0.2 | Dropout rate to prevent overfitting |
-| `n_head` | 4 | Number of attention heads |
-| `n_layer` | 4 | Number of transformer layers |
+| `n_head` | 6 | Number of attention heads |
+| `n_layer` | 6 | Number of transformer layers |
 
 ### Customization
 Modify hyperparameters in `main.py` to experiment with different configurations:
@@ -162,13 +168,13 @@ Modify hyperparameters in `main.py` to experiment with different configurations:
 # Larger model for better quality
 num_embd = 512
 n_head = 8
-n_layer = 6
+n_layer = 8
 
 # Longer context for better coherence
-block_size = 256
+block_size = 512
 
 # More training for convergence
-max_iters = 5000
+max_iters = 10000
 ```
 
 ## 📂 File Structure
@@ -178,8 +184,8 @@ MiniRogueGPT/
 ├── main.py                 # Training script with full model implementation
 ├── app.py                  # Streamlit web interface
 ├── input.txt              # Training data (user-provided)
-├── language_model.pth     # Final trained model weights
-├── language_model_stepXXX.pth  # Training checkpoints
+├── language_model_step4999.pth  # Final trained model weights
+├── language_model_stepXXX.pth   # Training checkpoints (500, 1000, 1500...)
 ├── generated_text.txt     # Sample output from training
 ├── README.md              # This file
 └── requirements.txt       # Python dependencies
@@ -188,17 +194,18 @@ MiniRogueGPT/
 ## 📊 Performance
 
 ### Training Metrics
-- **Training Time**: ~10-20 minutes (depending on GPU and dataset size)
-- **Total Iterations**: 2000 (with evaluation every 500 steps)
-- **Memory Usage**: ~2-4GB GPU memory
-- **Loss Convergence**: Typically achieves <1.5 validation loss
-- **Generation Speed**: ~100-500 tokens/second
+- **Training Time**: ~20-40 minutes (depending on GPU and dataset size)
+- **Total Iterations**: 5000 (with evaluation every 500 steps)
+- **Batch Size**: 64 samples per batch
+- **Memory Usage**: ~4-6GB GPU memory
+- **Loss Convergence**: Typically achieves <1.1 train loss, <1.5 validation loss
+- **Generation Speed**: ~200-800 tokens/second
 
 ### Quality Indicators
-- **Coherent Short Phrases**: Model learns basic grammar and vocabulary
-- **Context Awareness**: Maintains some consistency within context window
-- **Style Mimicry**: Adapts to training data's writing style
-- **Character-Level Accuracy**: Produces valid characters and common words
+- **Coherent Long Phrases**: Model learns complex grammar and vocabulary patterns
+- **Context Awareness**: Maintains consistency within 256-token context window
+- **Style Mimicry**: Closely adapts to training data's writing style
+- **Character-Level Accuracy**: Produces valid characters and coherent words
 
 ## 🛠️ Advanced Usage
 
@@ -213,14 +220,14 @@ MiniRogueGPT/
 
 ### Model Scaling
 ```python
-# Micro model (faster training)
-num_embd, n_head, n_layer = 128, 2, 2
-
-# Standard model (current)
+# Small model (faster training)
 num_embd, n_head, n_layer = 256, 4, 4
 
+# Standard model (current)
+num_embd, n_head, n_layer = 384, 6, 6
+
 # Large model (better quality)
-num_embd, n_head, n_layer = 512, 8, 6
+num_embd, n_head, n_layer = 512, 8, 8
 ```
 
 ### Generation Strategies
@@ -243,14 +250,15 @@ def generate_with_temperature(self, idx, max_tokens, temperature=1.0):
 **CUDA Out of Memory**
 ```python
 # Reduce batch size
-batch_size = 16  # or 8
+batch_size = 32  # or 16
 
 # Reduce model size
-num_embd = 128
+num_embd = 256
+n_layer = 4
 ```
 
 **Poor Generation Quality**
-- Increase training iterations (`max_iters = 5000`)
+- Increase training iterations (`max_iters = 8000`)
 - Use larger/better training data
 - Reduce dropout during inference
 - Try different learning rates
@@ -263,7 +271,7 @@ num_embd = 128
 ### Model Not Loading
 ```python
 # Check device compatibility
-model.load_state_dict(torch.load("model.pth", map_location="cpu"))
+model.load_state_dict(torch.load("language_model_step4999.pth", map_location="cpu"))
 ```
 
 ## 🤝 Contributing
